@@ -12,16 +12,20 @@ public final class Main {
     }
 
     public static void main(String[] args) {
-        // Press Alt+Enter with your caret at the highlighted text to see how
-        // IntelliJ IDEA suggests fixing it.
-        LOGGER.info("Hello and welcome!");
+        // Task 0
+//        helloWorld();
+        // Task 1
+//        LOGGER.info(Task1.minutesToSeconds("01:00"));
+        // Task 2
+//          LOGGER.info(Task2.countDigits(-12));
+        // Task 3
+//            LOGGER.info(Task3.isNestable(new int[] {1, -2}, new int[] {1, -2}));
+        // Task 4
+              LOGGER.info(Task4.fixString("оПомигети псаривьтс ртко!и"));
+    }
 
-        // Press Shift+F10 or click the green arrow button in the gutter to run the code.
-        for (int i = 0; i <= 2; i++) {
-
-            // Press Shift+F9 to start debugging your code. We have set one breakpoint
-            // for you, but you can always add more by pressing Ctrl+F8.
-            LOGGER.info("i = {}", i);
-        }
+    // Task 0
+    public static void helloWorld() {
+        LOGGER.info("Привет, мир!");
     }
 }
