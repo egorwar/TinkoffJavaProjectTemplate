@@ -41,6 +41,23 @@ public class Task6Test {
     }
 
     @Test
+    @DisplayName("Проверка на четырёхзначное число, у которого все цифры одинаковы")
+    void allSameDigitsNum() {
+        // given
+        int num = 9999;
+
+        // when
+        IllegalArgumentException thrown = assertThrows(
+            IllegalArgumentException.class,
+            () -> Task6.countK(num),
+            "Expected Task6.countK to throw, but it didn't"
+        );
+
+        // then
+        assertThat(thrown.getMessage()).isEqualTo("All digits cannot be the same");
+    }
+
+    @Test
     @DisplayName("Число Капрекара передаётся сразу")
     void zeroSteps() {
         // given

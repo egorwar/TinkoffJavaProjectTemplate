@@ -7,9 +7,9 @@ public class Task6 {
     /**
      * Counts the number of steps needed to reach the Kaprekar number from given number
      *
-     * @param num a 4-digit number > 1000
+     * @param num a 4-digit number > 1000, where all digits cannot be the same
      * @return the number of steps to reach the Kaprekar number from {@code num}
-     * @throws IllegalArgumentException if {@code num} is not a 4-digit number > 1000
+     * @throws IllegalArgumentException if {@code num} is not a 4-digit number > 1000 or all digits are the same
      */
     public static int countK(int num) {
 
@@ -28,6 +28,14 @@ public class Task6 {
         }
 
         int[] digitArray = new int[] {num % 10, num / 10 % 10, num / 100 % 10, num / 1000};
+
+        if (digitArray[0] == digitArray[1] &&
+            digitArray[1] == digitArray[2] &&
+            digitArray[2] == digitArray[3]) {
+
+            throw new IllegalArgumentException("All digits cannot be the same");
+        }
+
         Arrays.sort(digitArray);
 
         int ascSorted = 0;
