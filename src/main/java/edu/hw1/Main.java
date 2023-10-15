@@ -32,7 +32,20 @@ public final class Main {
 //        LOGGER.info(Task6.countK(1234));
 
         // Task 7
-        LOGGER.info(Task7.rotateLeft(16, 1));
+//        LOGGER.info(Task7.rotateRight(33, 1));
+//        LOGGER.info(Task7.rotateLeft(33, 1));
+
+        //Task 8
+//        LOGGER.info(Task8.knightBoardCapture(new byte[][] {
+//            {0, 0, 0, 1, 0, 0, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 1, 0, 0, 0, 1, 0, 0},
+//            {0, 0, 0, 0, 1, 0, 1, 0},
+//            {0, 1, 0, 0, 0, 1, 0, 0},
+//            {0, 0, 0, 0, 0, 0, 0, 0},
+//            {0, 1, 0, 0, 0, 0, 0, 1},
+//            {0, 0, 0, 0, 1, 0, 0, 0}
+//        }));
     }
 
     // Task 0
