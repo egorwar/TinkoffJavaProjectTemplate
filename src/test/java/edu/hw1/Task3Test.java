@@ -39,7 +39,8 @@ public class Task3Test {
         );
 
         // then
-        assertThat(thrown.getMessage()).isEqualTo("Outer array should have at least two entries");
+        assertThat(thrown.getMessage()).isEqualTo(
+            "Outer array should have at least two entries, as they act as nesting borders");
     }
 
     @Test
