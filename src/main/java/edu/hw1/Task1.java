@@ -1,14 +1,17 @@
 package edu.hw1;
 
-import java.util.Objects;
-
 public class Task1 {
+
+    private Task1() {
+    }
+
     /**
      * Converts given timespan to seconds
      *
      * @param timespan a string of "mm:ss" format, where "mm" can be any number of minutes, and "ss" < 60 (seconds)
      * @return given timespan in seconds, -1 for any incorrect input
      */
+    @SuppressWarnings("MagicNumber")
     public static long minutesToSeconds(String timespan) {
 
         String[] splittedTimespan = timespan.split(":");
@@ -17,7 +20,8 @@ public class Task1 {
             return -1;
         }
 
-        long minutes, seconds;
+        long minutes;
+        long seconds;
 
         try {
             minutes = Long.parseLong(splittedTimespan[0]);

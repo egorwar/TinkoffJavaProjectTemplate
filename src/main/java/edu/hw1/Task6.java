@@ -4,6 +4,11 @@ import java.util.Arrays;
 
 public class Task6 {
 
+    static final int KAPRENKAR_CONST = 6174;
+
+    private Task6() {
+    }
+
     /**
      * Counts the number of steps needed to reach the Kaprekar number from given number
      *
@@ -13,7 +18,7 @@ public class Task6 {
      */
     public static int countK(int num) {
 
-        if (num == 6174) {
+        if (num == KAPRENKAR_CONST) {
             return 0;
         } else {
             return 1 + countK(getKaprekarNum(num));
@@ -21,6 +26,7 @@ public class Task6 {
 
     }
 
+    @SuppressWarnings("MagicNumber")
     private static int getKaprekarNum(int num) {
 
         if (num <= 1000 || num > 9999) {
@@ -29,9 +35,9 @@ public class Task6 {
 
         int[] digitArray = new int[] {num % 10, num / 10 % 10, num / 100 % 10, num / 1000};
 
-        if (digitArray[0] == digitArray[1] &&
-            digitArray[1] == digitArray[2] &&
-            digitArray[2] == digitArray[3]) {
+        if (digitArray[0] == digitArray[1]
+            && digitArray[1] == digitArray[2]
+            && digitArray[2] == digitArray[3]) {
 
             throw new IllegalArgumentException("All digits cannot be the same");
         }

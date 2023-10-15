@@ -1,6 +1,10 @@
 package edu.hw1;
 
 public class Task3 {
+
+    private Task3() {
+    }
+
     /**
      * Checks whether the first given array can be nested by the second.
      * <p>

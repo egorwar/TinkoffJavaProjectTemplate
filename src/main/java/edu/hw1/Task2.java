@@ -1,12 +1,17 @@
 package edu.hw1;
 
 public class Task2 {
+
+    private Task2() {
+    }
+
     /**
      * Counts the number of digits in the whole number
      *
      * @param num a whole number
      * @return the number of digits in the given number
      */
+    @SuppressWarnings("ParameterAssignment")
     public static int countDigits(long num) {
         if (num == 0) {
             return 1;

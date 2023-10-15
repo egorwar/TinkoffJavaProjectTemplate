@@ -1,8 +1,10 @@
 package edu.hw1;
 
-import java.util.Arrays;
-
 public class Task4 {
+
+    private Task4() {
+    }
+
     /**
      * Fixes the string, where each consecutive pair of characters has been swapped.
      *

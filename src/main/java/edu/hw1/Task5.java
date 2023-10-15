@@ -1,6 +1,10 @@
 package edu.hw1;
 
 public class Task5 {
+
+    private Task5() {
+    }
+
     /**
      * Checks whether a number is a palindrome or any of its "descendants" of at least two digits is a palindrome.
      * <p>
@@ -11,6 +15,7 @@ public class Task5 {
      * @return whether the described condition is fulfilled for {@code num}
      * @throws IllegalArgumentException if {@code num} is negative
      */
+    @SuppressWarnings({"MagicNumber", "ParameterAssignment"})
     public static boolean isPalindromeDescendant(int num) {
 
         if (num < 0) {
@@ -32,6 +37,7 @@ public class Task5 {
         return false;
     }
 
+    @SuppressWarnings({"MagicNumber", "ParameterAssignment"})
     private static int getDescendant(int num) {
 
         int descendant = 0;

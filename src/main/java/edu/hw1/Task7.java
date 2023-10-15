@@ -5,6 +5,9 @@ import java.util.Collections;
 
 public class Task7 {
 
+    private Task7() {
+    }
+
     /**
      * Performs binary rotation (circular shift) to the right.
      * <p>
@@ -23,6 +26,7 @@ public class Task7 {
      * @return a number {@code n}, shifted circularly to the right by {@code shift} bits
      * @throws IllegalArgumentException if {@code n} is not positive or {@code shift} is negative
      */
+    @SuppressWarnings("MultipleStringLiterals")
     public static int rotateRight(int n, int shift) {
 
         if (n <= 0) {
@@ -61,6 +65,7 @@ public class Task7 {
      * @return a number {@code n}, shifted circularly to the left by {@code shift} bits
      * @throws IllegalArgumentException if {@code n} is not positive or {@code shift} is negative
      */
+    @SuppressWarnings("MultipleStringLiterals")
     public static int rotateLeft(int n, int shift) {
 
         if (n <= 0) {
@@ -81,6 +86,7 @@ public class Task7 {
         return binArrayToNum(binArray);
     }
 
+    @SuppressWarnings("ParameterAssignment")
     private static ArrayList<Byte> numToBinArray(int num) {
 
         var binArray = new ArrayList<Byte>();
