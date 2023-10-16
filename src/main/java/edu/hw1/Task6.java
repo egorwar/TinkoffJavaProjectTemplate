@@ -46,11 +46,12 @@ public class Task6 {
 
         int ascSorted = 0;
         int descSorted = 0;
+        int multiplier = 1;
 
         for (int i = 0; i < 4; i++) {
-            int multiplier = (int) Math.pow(10, i);
             descSorted += digitArray[i] * multiplier;
             ascSorted += digitArray[4 - i - 1] * multiplier;
+            multiplier *= 10;
         }
 
         return descSorted - ascSorted;

@@ -9,10 +9,14 @@ public class Task8 {
     static final byte KNIGHT = 1;
 
     static final byte[][] KNIGHT_MOVES = new byte[][] {
-        {1, 2}, {2, 1},
-        {-1, 2}, {2, -1},
-        {1, -2}, {-2, 1},
-        {-1, -2}, {-2, -1}
+        {1, 2},
+        {2, 1},
+        {-1, 2},
+        {2, -1},
+        {1, -2},
+        {-2, 1},
+        {-1, -2},
+        {-2, -1}
     };
 
     private Task8() {

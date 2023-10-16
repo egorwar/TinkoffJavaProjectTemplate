@@ -11,13 +11,22 @@ public class Task2 {
      * @param num a whole number
      * @return the number of digits in the given number
      */
-    @SuppressWarnings("ParameterAssignment")
+    @SuppressWarnings({"ParameterAssignment", "MagicNumber"})
     public static int countDigits(long num) {
+
         if (num == 0) {
             return 1;
-        } else if (num < 0) {
-            num *= -1;
         }
-        return (int) (Math.log10(num) + 1);
+
+        int digits = 0;
+
+        while (num != 0) {
+
+            num /= 10;
+            digits++;
+
+        }
+
+        return digits;
     }
 }

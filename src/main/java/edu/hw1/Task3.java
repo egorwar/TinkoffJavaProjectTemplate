@@ -1,5 +1,7 @@
 package edu.hw1;
 
+import java.util.Arrays;
+
 public class Task3 {
 
     private Task3() {
@@ -25,24 +27,12 @@ public class Task3 {
                 "Outer array should have at least two entries, as they act as nesting borders");
         }
 
-        int[] innerBorders = findMinMax(inner);
-        int[] outerBorders = findMinMax(outer);
+        int innerMin = Arrays.stream(inner).min().getAsInt();
+        int innerMax = Arrays.stream(inner).max().getAsInt();
+        int outerMin = Arrays.stream(outer).min().getAsInt();
+        int outerMax = Arrays.stream(outer).max().getAsInt();
 
-        return (innerBorders[0] > outerBorders[0] && innerBorders[1] < outerBorders[1]);
+        return (innerMin > outerMin && innerMax < outerMax);
     }
 
-    private static int[] findMinMax(int[] a) {
-        int min = a[0];
-        int max = a[0];
-
-        for (int el : a) {
-            if (el < min) {
-                min = el;
-            }
-            if (el > max) {
-                max = el;
-            }
-        }
-        return new int[] {min, max};
-    }
 }
