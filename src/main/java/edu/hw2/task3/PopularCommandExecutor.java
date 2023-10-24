@@ -10,7 +10,7 @@ public final class PopularCommandExecutor {
 
     private final static Logger LOGGER = LogManager.getLogger();
 
-    private Throwable cause;
+    private ConnectionException exc = null;
 
     public PopularCommandExecutor(ConnectionManager manager, int maxAttempts) {
         this.manager = manager;
@@ -40,7 +40,11 @@ public final class PopularCommandExecutor {
                 connection.execute(command);
             } catch (ConnectionException e) {
                 LOGGER.info("Connection failed!");
-                cause = e;
+                if (exc == null) {
+                    exc = e;
+                } else {
+                    exc.addSuppressed(e);
+                }
                 continue;
             } catch (Exception e) {
                 LOGGER.info("Other exception ...");
@@ -50,9 +54,6 @@ public final class PopularCommandExecutor {
             return null;
         }
 
-        var initialException = new ConnectionException();
-        initialException.initCause(cause);
-
-        return initialException;
+        return exc;
     }
 }

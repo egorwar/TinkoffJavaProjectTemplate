@@ -5,14 +5,12 @@ public class Task4 {
     }
 
     public static CallingInfo callingInfo() {
-        try {
-            throw new Exception();
-        } catch (Exception e) {
-            var stackTrace = e.getStackTrace();
 
-            String className = stackTrace[1].getClassName();
-            String methodName = stackTrace[1].getMethodName();
-            return new CallingInfo(className, methodName);
-        }
+        var stackTrace = Thread.currentThread().getStackTrace();
+
+        String className = stackTrace[2].getClassName();
+        String methodName = stackTrace[2].getMethodName();
+        return new CallingInfo(className, methodName);
+
     }
 }
