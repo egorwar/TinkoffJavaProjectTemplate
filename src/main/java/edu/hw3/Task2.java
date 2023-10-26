@@ -8,6 +8,7 @@ public class Task2 {
     private Task2() {
     }
 
+    @SuppressWarnings("MissingSwitchDefault")
     public static ArrayList<String> clusterize(String string) {
 
         char[] chars = string.toCharArray();
