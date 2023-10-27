@@ -1,15 +1,16 @@
 package edu.project1;
 
+import edu.project1.players.Player;
 import edu.project1.states.GameState;
 import edu.project1.states.GuessState;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.HashSet;
 
 public class Game {
-    private BufferedReader r;
+
+    private final Player player;
+
     private final int maxMistakes;
     private final char[] word;
     private final char[] maskedWord;
@@ -32,7 +33,7 @@ public class Game {
                 if (Arrays.equals(maskedWord, word)) {
                     yield GameState.WIN;
                 } else {
-                    System.out.println(GuessState.RIGHT.getMessage());
+                    player.takeReply(GuessState.RIGHT.getMessage());
                     yield GameState.ACTIVE;
                 }
             }
@@ -42,28 +43,26 @@ public class Game {
                     yield GameState.LOSS;
                 } else {
                     currentMistake++;
-                    System.out.println(GuessState.WRONG.getMessage());
+                    player.takeReply(GuessState.WRONG.getMessage());
                     yield GameState.ACTIVE;
                 }
             }
             case INVALID -> {
-                System.out.println(GuessState.INVALID.getMessage());
+                player.takeReply(GuessState.INVALID.getMessage());
                 yield GameState.ACTIVE;
             }
             case REPEAT -> {
-                System.out.println(GuessState.REPEAT.getMessage());
+                player.takeReply(GuessState.REPEAT.getMessage());
                 yield GameState.ACTIVE;
             }
         };
     }
 
-    public Game(Dictionary wordDictionary, int maxMistakes) {
+    public Game(Dictionary wordDictionary, int maxMistakes, Player player) {
 
         if (maxMistakes < 0) {
             throw new IllegalArgumentException("The maximum number of mistakes should be positive or zero");
         }
-
-        this.r = new BufferedReader(new InputStreamReader(System.in));
 
         this.maxMistakes = maxMistakes;
         this.word = wordDictionary.getRandomWord();
@@ -73,26 +72,38 @@ public class Game {
         this.used = new HashSet<>();
         this.currentMistake = 0;
         this.state = GameState.ACTIVE;
+
+        this.player = player;
     }
 
     @SuppressWarnings({"RegexpSinglelineJava", "ReturnCount"})
     public void run() throws IOException {
 
-        System.out.println(GameState.START.getMessage());
-        System.out.printf(GameState.ACTIVE.getMessage(), new String(maskedWord), currentMistake, maxMistakes);
+        player.takeReply(String.format(GameState.START.getMessage(), maxMistakes));
+        player.takeReply(String.format(
+            GameState.ACTIVE.getMessage(),
+            new String(maskedWord),
+            currentMistake,
+            maxMistakes
+        ));
 
         while (true) {
 
-            playRound(guessResolver.resolve(r.readLine(), maskedWord, used));
+            playRound(guessResolver.resolve(player.getGuess(), maskedWord, used));
 
             if (state == GameState.GIVE_UP || state == GameState.LOSS) {
-                System.out.println(state.getMessage());
+                player.takeReply(state.getMessage());
                 return;
             } else if (state == GameState.WIN) {
-                System.out.printf(state.getMessage(), new String(word));
+                player.takeReply(String.format(state.getMessage(), new String(word)));
                 return;
             } else if (state == GameState.ACTIVE) {
-                System.out.printf(state.getMessage(), new String(maskedWord), currentMistake, maxMistakes);
+                player.takeReply(String.format(
+                    state.getMessage(),
+                    new String(maskedWord),
+                    currentMistake,
+                    maxMistakes
+                ));
             }
 
         }

@@ -1,5 +1,6 @@
 package edu.project1;
 
+import edu.project1.players.ConsolePlayer;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,7 +14,11 @@ public final class Main {
     }
 
     public static void main(String[] args) throws IOException {
-        var game = new Game(new Dictionary(new HashSet<>(Set.of("apple", "microsoft", "yandex"))), 0);
+        var game = new Game(
+            new Dictionary(new HashSet<>(Set.of("apple", "microsoft", "yandex"))),
+            0,
+            new ConsolePlayer()
+        );
         game.run();
     }
 }
