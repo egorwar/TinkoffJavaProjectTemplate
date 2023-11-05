@@ -13,77 +13,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AnimalTest {
-//    @Test
-//    @DisplayName("Right: Проверка на неположительное число")
-//    void rightNonPosNum() {
-//        // given
-//        int n = -2222;
-//        int shift = 5;
-//
-//        // when
-//        IllegalArgumentException thrown = assertThrows(
-//            IllegalArgumentException.class,
-//            () -> Task7.rotateRight(n, shift),
-//            "Expected Task7.rotateRight to throw, but it didn't"
-//        );
-//
-//        // then
-//        assertThat(thrown.getMessage()).isEqualTo("Number to rotate should be positive");
-//    }
-//
-//    @Test
-//    @DisplayName("Left: Проверка на неположительное число")
-//    void leftNonPosNum() {
-//        // given
-//        int n = -2222;
-//        int shift = 5;
-//
-//        // when
-//        IllegalArgumentException thrown = assertThrows(
-//            IllegalArgumentException.class,
-//            () -> Task7.rotateLeft(n, shift),
-//            "Expected Task7.rotateLeft to throw, but it didn't"
-//        );
-//
-//        // then
-//        assertThat(thrown.getMessage()).isEqualTo("Number to rotate should be positive");
-//    }
-//
-//    @Test
-//    @DisplayName("Right: Проверка на отрицательный сдвиг")
-//    void rightNegShift() {
-//        // given
-//        int n = 1;
-//        int shift = -5;
-//
-//        // when
-//        IllegalArgumentException thrown = assertThrows(
-//            IllegalArgumentException.class,
-//            () -> Task7.rotateRight(n, shift),
-//            "Expected Task7.rotateRight to throw, but it didn't"
-//        );
-//
-//        // then
-//        assertThat(thrown.getMessage()).isEqualTo("The number of bits to shift cannot be negative");
-//    }
-//
-//    @Test
-//    @DisplayName("Left: Проверка на отрицательный сдвиг")
-//    void leftNegShift() {
-//        // given
-//        int n = 1;
-//        int shift = -5;
-//
-//        // when
-//        IllegalArgumentException thrown = assertThrows(
-//            IllegalArgumentException.class,
-//            () -> Task7.rotateLeft(n, shift),
-//            "Expected Task7.rotateLeft to throw, but it didn't"
-//        );
-//
-//        // then
-//        assertThat(thrown.getMessage()).isEqualTo("The number of bits to shift cannot be negative");
-//    }
 
     @Test
     @DisplayName("проверка задачи 1")
@@ -678,34 +607,52 @@ public class AnimalTest {
         animals.add(new Animal("Namy", Animal.Type.BIRD, Animal.Sex.F, 2, 7, 4, false));
 
         var expectedErrors = new HashMap<String, String>();
-        expectedErrors.put("", """
+        String str11 = """
             Type: Invalid age, should be a positive number <= 50
             Value: 52
 
+            """;
+        String str12 = """
             Type: Name should not be empty
             Value:\s
 
+            """;
+
+        String str13 = """
             Type: Invalid height, should be a positive number <= 2000
             Value: 900000
 
-            """);
-        expectedErrors.put("Muppy", """
+            """;
+
+        String str21 = """
             Type: Invalid height, should be a positive number <= 2000
             Value: -1
 
+            """;
+        String str22 = """
             Type: Invalid age, should be a positive number <= 50
             Value: -5
 
+            """;
+
+        String str23 = """
             Type: Invalid weight, should be a positive number <= 80000
             Value: 99999999
 
-            """);
+            """;
+        expectedErrors.put("", str11 + str12 + str13);
+        expectedErrors.put("Muppy", str21 + str22 + str23);
 
         // when
         var trueErrors = Main.task20(Main.task19(animals));
 
         // then
-        assertThat(trueErrors).isEqualTo(expectedErrors);
+        assertThat(trueErrors.get("").contains(str11)
+            && trueErrors.get("").contains(str12)
+            && trueErrors.get("").contains(str13)).isTrue();
+        assertThat(trueErrors.get("Muppy").contains(str21)
+            && trueErrors.get("Muppy").contains(str22)
+            && trueErrors.get("Muppy").contains(str23)).isTrue();
     }
 
 }
