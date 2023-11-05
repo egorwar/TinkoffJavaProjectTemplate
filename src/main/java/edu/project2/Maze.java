@@ -4,7 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Random;
 
-@SuppressWarnings("MagicNumber")
+@SuppressWarnings({"MagicNumber", "MultipleStringLiterals"})
 public final class Maze {
     private final int height;
     private final int width;
@@ -13,17 +13,30 @@ public final class Maze {
     public Maze(int height, int width) {
 
         if (height <= 2 || width <= 2 || height % 2 == 0 || width % 2 == 0) {
-            throw new IllegalArgumentException("Height and width must be odd numbers greater than 2.");
+            throw new IllegalArgumentException("Height and width must be odd numbers greater than 2");
         }
 
         this.height = height;
         this.width = width;
 
-        this.grid = build();
+        this.grid = build(new Random());
 
     }
 
-    private Cell[][] build() {
+    public Maze(int height, int width, long seed) {
+
+        if (height <= 2 || width <= 2 || height % 2 == 0 || width % 2 == 0) {
+            throw new IllegalArgumentException("Height and width must be odd numbers greater than 2");
+        }
+
+        this.height = height;
+        this.width = width;
+
+        this.grid = build(new Random(seed));
+
+    }
+
+    private Cell[][] build(Random random) {
         Cell[][] maze = new Cell[height][width];
 
         for (int row = 0; row < height; row++) {
@@ -32,7 +45,6 @@ public final class Maze {
             }
         }
 
-        Random random = new Random();
         recursiveBacktracking(random, maze, 1, 1);
 
         return maze;
@@ -40,9 +52,9 @@ public final class Maze {
 
     private void recursiveBacktracking(Random random, Cell[][] maze, int row, int col) {
 
-        maze[row][col] = new Cell(row, col, Cell.Type.EMPTY, true, null);
-
+        maze[row][col].setType(Cell.Type.EMPTY);
         int[] directions = {0, 1, 2, 3};
+
         for (int i = 0; i < directions.length; i++) {
             int randomIndex = random.nextInt(directions.length);
             int temp = directions[i];
@@ -55,15 +67,7 @@ public final class Maze {
             int newCol = col + getColOffset(direction);
 
             if (isValidNeighbor(maze, newRow, newCol)) {
-                maze[row + getRowOffset(direction) / 2][col + getColOffset(direction) / 2] =
-                    new Cell(
-                        row + getRowOffset(direction) / 2,
-                        col + getColOffset(direction) / 2,
-                        Cell.Type.EMPTY,
-                        true,
-                        null
-                    );
-
+                maze[row + getRowOffset(direction) / 2][col + getColOffset(direction) / 2].setType(Cell.Type.EMPTY);
                 recursiveBacktracking(random, maze, newRow, newCol);
             }
         }
@@ -114,8 +118,8 @@ public final class Maze {
 
             boolean foundValidNeighbor = false;
             for (int direction = 0; direction < 4; direction++) {
-                int newRow = currentCell.getRow() + getRowOffset(direction);
-                int newCol = currentCell.getCol() + getColOffset(direction);
+                int newRow = currentCell.getRow() + getRowOffset2(direction);
+                int newCol = currentCell.getCol() + getColOffset2(direction);
 
                 if (isValidNeighbor(newRow, newCol)) {
                     foundValidNeighbor = true;
@@ -145,6 +149,26 @@ public final class Maze {
         }
     }
 
+    private int getRowOffset2(int direction) {
+        return switch (direction) {
+            case 0 -> -1;
+            case 1 -> 1;
+            case 2 -> 0;
+            case 3 -> 0;
+            default -> 0;
+        };
+    }
+
+    private int getColOffset2(int direction) {
+        return switch (direction) {
+            case 0 -> 0;
+            case 1 -> 0;
+            case 2 -> -1;
+            case 3 -> 1;
+            default -> 0;
+        };
+    }
+
     private boolean isValidNeighbor(int row, int col) {
         return row >= 0 && row < height && col >= 0 && col < width && !grid[row][col].isVisited()
             && grid[row][col].getType() != Cell.Type.WALL;
@@ -152,7 +176,7 @@ public final class Maze {
 
     private void validateCell(int x, int y) {
         if (x < 0 || x >= height || y < 0 || y >= width || grid[x][y].getType() == Cell.Type.WALL) {
-            throw new IllegalArgumentException("Неверно заданы координаты");
+            throw new IllegalArgumentException("Invalid coordinates");
         }
     }
 

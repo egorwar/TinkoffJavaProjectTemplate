@@ -1,17 +1,17 @@
 package edu.project2;
 
 public class Cell {
-    private int row;
-    private int col;
+    private final int row;
+    private final int col;
     private Cell.Type type;
-    private boolean visited;
+    private boolean isVisited;
     private Cell previous;
 
-    public Cell(int row, int col, Cell.Type type, boolean visited, Cell previous) {
+    public Cell(int row, int col, Cell.Type type, boolean isVisited, Cell previous) {
         this.row = row;
         this.col = col;
         this.type = type;
-        this.visited = visited;
+        this.isVisited = isVisited;
         this.previous = previous;
     }
 
@@ -19,16 +19,8 @@ public class Cell {
         return row;
     }
 
-    public void setRow(int row) {
-        this.row = row;
-    }
-
     public int getCol() {
         return col;
-    }
-
-    public void setCol(int col) {
-        this.col = col;
     }
 
     public Cell.Type getType() {
@@ -40,11 +32,11 @@ public class Cell {
     }
 
     public boolean isVisited() {
-        return visited;
+        return isVisited;
     }
 
     public void setVisited(boolean visited) {
-        this.visited = visited;
+        this.isVisited = visited;
     }
 
     public Cell getPrevious() {
@@ -56,7 +48,7 @@ public class Cell {
     }
 
     public enum Type {
-        WALL("\u2588"),
+        WALL("█"),
         EMPTY(" "),
         PATH("*");
 
