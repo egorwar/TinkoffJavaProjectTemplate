@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Random;
 
+@SuppressWarnings("MagicNumber")
 public final class Maze {
     private final int height;
     private final int width;
@@ -145,8 +146,8 @@ public final class Maze {
     }
 
     private boolean isValidNeighbor(int row, int col) {
-        return row >= 0 && row < height && col >= 0 && col < width && !grid[row][col].isVisited() &&
-            grid[row][col].getType() != Cell.Type.WALL;
+        return row >= 0 && row < height && col >= 0 && col < width && !grid[row][col].isVisited()
+            && grid[row][col].getType() != Cell.Type.WALL;
     }
 
     private void validateCell(int x, int y) {

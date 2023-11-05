@@ -10,9 +10,11 @@ public final class Main {
     private Main() {
     }
 
+    @SuppressWarnings("MagicNumber")
+    
     public static void main(String[] args) throws IOException {
         Maze maze = new Maze(13, 21);
         maze.solveMaze(1, 1, 11, 19);
-        LOGGER.info('\n'+maze.printMaze());
+        LOGGER.info('\n' + maze.printMaze());
     }
 }
