@@ -20,5 +20,6 @@ public final class Main {
             new ConsolePlayer()
         );
         game.run();
+
     }
 }
