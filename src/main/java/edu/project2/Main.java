@@ -11,7 +11,6 @@ public final class Main {
     }
 
     @SuppressWarnings("MagicNumber")
-    
     public static void main(String[] args) throws IOException {
         Maze maze = new Maze(13, 21);
         maze.solveMaze(1, 1, 11, 19);
