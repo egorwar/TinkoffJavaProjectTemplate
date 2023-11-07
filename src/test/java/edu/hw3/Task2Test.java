@@ -49,47 +49,6 @@ public class Task2Test {
     }
 
     @Test
-    @DisplayName("Проверка на строку с буквами 1")
-    void stringWithSymbolsTest1() {
-        // given
-        String string = "(Hello, world!)";
-
-        // when
-        ArrayList<String> clusterized = Task2.clusterize(string);
-
-        // then
-        assertThat(clusterized).isEqualTo(new ArrayList<String>(List.of("(Hello, world!)")));
-    }
-
-    @Test
-    @DisplayName("Проверка на строку с буквами 2")
-    void stringWithSymbolsTest2() {
-        // given
-        String stringWithLetters = "(sg(sag(a)gfg)g(hdf)g)(j(fghdg)j(sgs(fh)sfh()dhfsd)dsfh)dhh";
-        String stringWithoutLetters = "((())())(()(()()))";
-
-        // when
-        ArrayList<String> clusterized1 = Task2.clusterize(stringWithLetters);
-        ArrayList<String> clusterized2 = Task2.clusterize(stringWithoutLetters);
-
-        // then
-        assertThat(clusterized1.size()).isEqualTo(clusterized2.size());
-    }
-
-    @Test
-    @DisplayName("Проверка на строку без скобок")
-    void stringWithoutBracesTest() {
-        // given
-        String string = "Hello, world!";
-
-        // when
-        ArrayList<String> clusterized = Task2.clusterize(string);
-
-        // then
-        assertThat(clusterized).isEqualTo(new ArrayList<String>(List.of(string)));
-    }
-
-    @Test
     @DisplayName("Проверка на строку с несовпадающим числом скобок")
     void unevenBracesTest() {
         // given

@@ -2,6 +2,7 @@ package edu.hw3.task5;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class Task5 {
@@ -29,13 +30,15 @@ public class Task5 {
             }
         }
 
-        Collections.sort(contacts);
-
         return switch (order) {
-            case ASC -> contacts;
-            case DESC -> {
-                Collections.reverse(contacts);
+            case ASC -> {
+                Collections.sort(contacts);
                 yield contacts;
+            }
+            case DESC -> {
+                contacts.sort(Comparator.reverseOrder());
+                yield contacts;
+
             }
         };
 

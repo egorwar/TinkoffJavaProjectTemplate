@@ -7,7 +7,15 @@ import java.util.stream.IntStream;
 
 public class Task1 {
 
-    private static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
+    private static final String ALPHABET;
+
+    static {
+        StringBuilder sb = new StringBuilder();
+        for (char ch = 'a'; ch <= 'z'; ch++) {
+            sb.append(ch);
+        }
+        ALPHABET = sb.toString();
+    }
 
     private static HashMap<Character, Character> inverse;
 
