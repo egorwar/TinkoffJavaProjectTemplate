@@ -99,7 +99,7 @@ public class NginxLogStatsAnalyzer {
 
     private static Stream<LogRecord> readLogRecordsFromFiles(String filePathPattern) throws IOException {
         PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + filePathPattern);
-        Path currentDir = Paths.get("").toAbsolutePath();
+        Path currentDir = Paths.get("");
         return Files.find(currentDir, 1, (path, attributes) -> pathMatcher.matches(path))
             .flatMap(path -> {
                 try {

@@ -136,14 +136,14 @@ public class Project3Test {
     void partialResponseMd() {
         // given
         String[] args =
-            "--path /Users/hoba/Downloads/JavaTinkoff/TinkoffJavaProjectTemplate/logs.txt --from 2023-11-16 --to 2023-11-17 --format markdown".split(
+            "--path logs.txt --from 2023-11-16 --to 2023-11-17 --format markdown".split(
                 " ");
         String expected = """
             #### Общая информация
 
             | Метрика                  | Значение   |
             |:-------------------------|-----------:|
-            | Путь                     | `/Users/hoba/Downloads/JavaTinkoff/TinkoffJavaProjectTemplate/logs.txt` |
+            | Путь                     | `logs.txt` |
             | Начальная дата           | 2023.11.16 |
             | Конечная дата            | 2023.11.17 |
             | Количество запросов      | 31 |
@@ -201,14 +201,14 @@ public class Project3Test {
     void partialResponseAdoc() {
         // given
         String[] args =
-            "--path /Users/hoba/Downloads/JavaTinkoff/TinkoffJavaProjectTemplate/logs.txt --from 2023-11-17 --to 2023-11-18 --format adoc".split(
+            "--path logs.txt --from 2023-11-17 --to 2023-11-18 --format adoc".split(
                 " ");
         String expected = """
             ==== Общая информация ====
 
             |=====
             |Метрика | Значение
-            |Файл(-ы) | `/Users/hoba/Downloads/JavaTinkoff/TinkoffJavaProjectTemplate/logs.txt`
+            |Файл(-ы) | `logs.txt`
             |Начальная дата | 2023.11.17
             |Конечная дата | 2023.11.18
             |Количество запросов | 12977

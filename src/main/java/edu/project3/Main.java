@@ -13,10 +13,10 @@ public final class Main {
     @SuppressWarnings("MagicNumber")
     public static void main(String[] args) throws IOException {
         String[] arguments =
-            ("--path /Users/hoba/Downloads/JavaTinkoff/TinkoffJavaProjectTemplate/logs.txt"
-            + "--from 2023-11-17 "
-            + "--to 2023-11-18"
-            + "--format adoc").split(" ");
+            ("--path logs.txt"
+                + "--from 2023-11-17 "
+                + "--to 2023-11-18"
+                + "--format adoc").split(" ");
         LOGGER.info('\n' + NginxLogStatsAnalyzer.execute(args));
     }
 }
