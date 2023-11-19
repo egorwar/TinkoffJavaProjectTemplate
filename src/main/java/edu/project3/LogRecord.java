@@ -13,7 +13,15 @@ class LogRecord {
     private final String referer;
     private final String userAgent;
 
-    public LogRecord(String ipAddress, String datetime, String request, int status, int bytesSent, String referer, String userAgent) {
+    LogRecord(
+        String ipAddress,
+        String datetime,
+        String request,
+        int status,
+        int bytesSent,
+        String referer,
+        String userAgent
+    ) {
         this.ipAddress = ipAddress;
         this.datetime = datetime;
         this.request = request;
@@ -35,19 +43,15 @@ class LogRecord {
         return request;
     }
 
+    public String getRequestType() {
+        return request.split(" ")[0];
+    }
+
     public int getStatus() {
         return status;
     }
 
     public int getBytesSent() {
         return bytesSent;
-    }
-
-    public String getReferer() {
-        return referer;
-    }
-
-    public String getUserAgent() {
-        return userAgent;
     }
 }

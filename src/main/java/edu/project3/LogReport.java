@@ -3,35 +3,31 @@ package edu.project3;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+@SuppressWarnings({"MultipleStringLiterals", "MagicNumber"})
 class LogReport {
-    private String fileName;
-    private OffsetDateTime fromDate;
-    private OffsetDateTime toDate;
+    private final String path;
+    private final OffsetDateTime fromDate;
+    private final OffsetDateTime toDate;
     private final List<LogRecord> logRecords;
 
-    public LogReport() {
+    private final int maxCount = 5;
+
+    LogReport(String path, OffsetDateTime fromDate, OffsetDateTime toDate) {
         logRecords = new ArrayList<>();
+        this.path = path;
+        this.fromDate = fromDate;
+        this.toDate = toDate;
     }
 
     public void addLogRecord(LogRecord logRecord) {
         logRecords.add(logRecord);
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public void setFromDate(OffsetDateTime fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public void setToDate(OffsetDateTime toDate) {
-        this.toDate = toDate;
     }
 
     public String toMarkdown() {
@@ -40,25 +36,69 @@ class LogReport {
         sb.append("#### Общая информация\n\n");
         sb.append("| Метрика                  | Значение   |\n");
         sb.append("|:-------------------------|-----------:|\n");
-        sb.append("| Файл(-ы)                 | `").append(fileName).append("` |\n");
-        sb.append("| Начальная дата           | ").append(fromDate != null ? fromDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) : "-").append(" |\n");
-        sb.append("| Конечная дата            | ").append(toDate != null ? toDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) : "-").append(" |\n");
+        sb.append("| Путь                     | `").append(path).append("` |\n");
+        sb.append("| Начальная дата           | ")
+            .append(fromDate != null ? fromDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) : "-").append(" |\n");
+        sb.append("| Конечная дата            | ")
+            .append(toDate != null ? toDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) : "-").append(" |\n");
         sb.append("| Количество запросов      | ").append(logRecords.size()).append(" |\n");
         sb.append("| Средний размер ответа    | ").append(calculateAverageResponseSize()).append("b |\n\n");
 
-        sb.append("#### Запрашиваемые ресурсы\n\n");
+        int i = 0;
+        sb.append("#### Запрашиваемые ресурсы (TOP " + maxCount + ")\n\n");
         sb.append("| Ресурс                   | Количество |\n");
         sb.append("|:-------------------------|-----------:|\n");
         for (Map.Entry<String, Integer> entry : calculateMostFrequentResources().entrySet()) {
             sb.append("| ").append(entry.getKey()).append(" | ").append(entry.getValue()).append(" |\n");
+            i++;
+            if (i >= maxCount) {
+                break;
+            }
         }
         sb.append("\n");
 
         sb.append("#### Коды ответа\n\n");
         sb.append("| Код  | Имя                    | Количество |\n");
         sb.append("|:----:|:-----------------------|-----------:|\n");
-        for (Map.Entry<Integer, String> entry : calculateMostFrequentStatusCodes().entrySet()) {
-            sb.append("| ").append(entry.getKey()).append(" | ").append(entry.getValue()).append(" | ").append(calculateStatusCodeCount(entry.getKey())).append(" |\n");
+        for (var entry : calculateMostFrequentStatusCodes()) {
+            sb
+                .append("| ")
+                .append(entry.getKey())
+                .append(" | ")
+                .append(getStatusName(entry.getKey()))
+                .append(" | ")
+                .append(entry.getValue())
+                .append(" |\n");
+        }
+        sb.append("\n");
+
+        i = 0;
+        sb.append("#### ip адреса (TOP " + maxCount + ")\n\n");
+        sb.append("| Адрес| Частота обращения |\n");
+        sb.append("|:----:|------------------:|\n");
+        for (var entry : calculateMostFrequentIpAddresses()) {
+            sb
+                .append("| ")
+                .append(entry.getKey())
+                .append(" | ")
+                .append(entry.getValue())
+                .append(" |\n");
+            i++;
+            if (i >= maxCount) {
+                break;
+            }
+        }
+
+        sb.append("\n#### типы запросов\n\n");
+        sb.append("| Запрос| Количество|\n");
+        sb.append("|:-----:|----------:|\n");
+        for (var entry : calculateMostFrequentRequestTypes()) {
+            sb
+                .append("| ")
+                .append(entry.getKey())
+                .append(" | ")
+                .append(entry.getValue())
+                .append(" |\n");
         }
 
         return sb.toString();
@@ -70,27 +110,79 @@ class LogReport {
         sb.append("==== Общая информация ====\n\n");
         sb.append("|=====\n");
         sb.append("|Метрика | Значение\n");
-        sb.append("|Файл(-ы) | `").append(fileName).append("`\n");
-        sb.append("|Начальная дата | ").append(fromDate != null ? fromDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) : "-").append("\n");
-        sb.append("|Конечная дата | ").append(toDate != null ? toDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) : "-").append("\n");
+        sb.append("|Файл(-ы) | `").append(path).append("`\n");
+        sb.append("|Начальная дата | ")
+            .append(fromDate != null ? fromDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) : "-").append("\n");
+        sb.append("|Конечная дата | ")
+            .append(toDate != null ? toDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) : "-").append("\n");
         sb.append("|Количество запросов | ").append(logRecords.size()).append("\n");
         sb.append("|Средний размер ответа | ").append(calculateAverageResponseSize()).append("b\n");
+        sb.append("|=====\n");
         sb.append("\n");
 
-        sb.append("==== Запрашиваемые ресурсы ====\n\n");
+        sb.append("==== Запрашиваемые ресурсы (TOP " + maxCount + ") ====\n\n");
         sb.append("|=====\n");
         sb.append("|Ресурс | Количество\n");
+        int i = 0;
         for (Map.Entry<String, Integer> entry : calculateMostFrequentResources().entrySet()) {
             sb.append("|").append(entry.getKey()).append(" | ").append(entry.getValue()).append("\n");
+            i++;
+            if (i >= maxCount) {
+                break;
+            }
         }
+        sb.append("|=====\n");
         sb.append("\n");
 
         sb.append("==== Коды ответа ====\n\n");
         sb.append("|=====\n");
         sb.append("|Код | Имя | Количество\n");
-        for (Map.Entry<Integer, String> entry : calculateMostFrequentStatusCodes().entrySet()) {
-            sb.append("|").append(entry.getKey()).append(" | ").append(entry.getValue()).append(" | ").append(calculateStatusCodeCount(entry.getKey())).append("\n");
+        for (var entry : calculateMostFrequentStatusCodes()) {
+            sb
+                .append("|")
+                .append(entry.getKey())
+                .append(" | ")
+                .append(getStatusName(entry.getKey()))
+                .append(" | ")
+                .append(entry.getValue())
+                .append("\n");
         }
+        sb.append("|=====\n");
+
+        sb.append("\n");
+
+        i = 0;
+        sb.append("==== ip адреса (TOP " + maxCount + ") ====\n\n");
+
+        sb.append("|=====\n");
+        sb.append("|Адрес | Частота обращения\n");
+        for (var entry : calculateMostFrequentIpAddresses()) {
+            sb
+                .append("| ")
+                .append(entry.getKey())
+                .append(" | ")
+                .append(entry.getValue())
+                .append("\n");
+            i++;
+            if (i >= maxCount) {
+                break;
+            }
+        }
+        sb.append("|=====\n");
+
+        sb.append("\n==== типы запросов ====\n\n");
+
+        sb.append("|=====\n");
+        sb.append("|Запрос | Количество\n");
+        for (var entry : calculateMostFrequentRequestTypes()) {
+            sb
+                .append("| ")
+                .append(entry.getKey())
+                .append(" | ")
+                .append(entry.getValue())
+                .append("\n");
+        }
+        sb.append("|=====\n");
 
         return sb.toString();
     }
@@ -116,49 +208,54 @@ class LogReport {
             resources.put(resource, resources.getOrDefault(resource, 0) + 1);
         }
 
-        return sortByValueDescending(resources);
+        return sortStringIntByValueDescending(resources);
     }
 
-    private Map<Integer, String> calculateMostFrequentStatusCodes() {
-        Map<Integer, String> statusCodes = new HashMap<>();
+    private List<Map.Entry<Integer, Long>> calculateMostFrequentStatusCodes() {
+        var freqs = logRecords.stream().collect(
+            Collectors.groupingBy(
+                LogRecord::getStatus,
+                Collectors.counting()
+            )
+        );
 
-        for (LogRecord logRecord : logRecords) {
-            int statusCode = logRecord.getStatus();
-            String statusName = getStatusName(statusCode);
-            statusCodes.put(statusCode, statusName);
-        }
-
-        return sortByKeyDescending(statusCodes);
+        return freqs.entrySet().stream()
+            .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+            .collect(Collectors.toList());
     }
 
-    private int calculateStatusCodeCount(int statusCode) {
-        int count = 0;
-        for (LogRecord logRecord : logRecords) {
-            if (logRecord.getStatus() == statusCode) {
-                count++;
-            }
-        }
-        return count;
+    private List<Map.Entry<String, Long>> calculateMostFrequentIpAddresses() {
+        var freqs = logRecords.stream().collect(
+            Collectors.groupingBy(
+                LogRecord::getIpAddress,
+                Collectors.counting()
+            )
+        );
+
+        return freqs.entrySet().stream()
+            .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+            .collect(Collectors.toList());
     }
 
-    private Map<String, Integer> sortByValueDescending(Map<String, Integer> map) {
+    private List<Map.Entry<String, Long>> calculateMostFrequentRequestTypes() {
+        var freqs = logRecords.stream().collect(
+            Collectors.groupingBy(
+                LogRecord::getRequestType,
+                Collectors.counting()
+            )
+        );
+
+        return freqs.entrySet().stream()
+            .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+            .collect(Collectors.toList());
+    }
+
+    private Map<String, Integer> sortStringIntByValueDescending(Map<String, Integer> map) {
         List<Map.Entry<String, Integer>> entries = new ArrayList<>(map.entrySet());
         entries.sort((e1, e2) -> e2.getValue().compareTo(e1.getValue()));
 
         Map<String, Integer> sortedMap = new LinkedHashMap<>();
         for (Map.Entry<String, Integer> entry : entries) {
-            sortedMap.put(entry.getKey(), entry.getValue());
-        }
-
-        return sortedMap;
-    }
-
-    private Map<Integer, String> sortByKeyDescending(Map<Integer, String> map) {
-        List<Map.Entry<Integer, String>> entries = new ArrayList<>(map.entrySet());
-        entries.sort((e1, e2) -> e2.getKey().compareTo(e1.getKey()));
-
-        Map<Integer, String> sortedMap = new LinkedHashMap<>();
-        for (Map.Entry<Integer, String> entry : entries) {
             sortedMap.put(entry.getKey(), entry.getValue());
         }
 
@@ -176,9 +273,10 @@ class LogReport {
     private String getStatusName(int statusCode) {
         return switch (statusCode) {
             case 200 -> "OK";
+            case 400 -> "Bad Request";
             case 404 -> "Not Found";
             case 500 -> "Internal Server Error";
-            default -> "Unknown";
+            default -> "?";
         };
     }
 }

@@ -1,6 +1,8 @@
 package edu.project3;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystems;
@@ -8,20 +10,26 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import java.util.stream.Stream;
 
+@SuppressWarnings({"MultipleStringLiterals", "MagicNumber"})
 public class NginxLogStatsAnalyzer {
 
-    public static void main(String[] args) {
-        try {
-            String path = args[0];
-            String from = null;
-            String to = null;
-            String format = "markdown";
+    private NginxLogStatsAnalyzer() {
+    }
 
+    public static String execute(String[] args) {
+
+        String path = null;
+        String from = null;
+        String to = null;
+        String format = null;
+        try {
             for (int i = 0; i < args.length; i += 2) {
                 String option = args[i];
                 String value = args[i + 1];
@@ -35,14 +43,28 @@ public class NginxLogStatsAnalyzer {
                     format = value;
                 }
             }
-
-            Stream<LogRecord> logRecords = readLogRecords(path);
-            LogReport logReport = generateLogReport(logRecords, from, to);
-            String output = formatLogReport(logReport, format);
-            System.out.println(output);
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.err.println("Invalid arguments. Please provide the necessary input.");
+            throw new ArrayIndexOutOfBoundsException("Arguments should come in pairs like: [--arg] [value]");
         }
+
+        if (path == null) {
+            throw new IllegalArgumentException("--path is a mandatory argument");
+        }
+
+        Stream<LogRecord> logRecords = readLogRecords(path);
+        LogReport logReport = generateLogReport(logRecords, from, to, path);
+        String output = formatLogReport(logReport, format);
+
+        if (format != null) {
+            String name = "report." + ((Objects.equals(format, "adoc")) ? "adoc" : "md");
+            try (PrintWriter out = new PrintWriter(name)) {
+                out.println(output);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return output;
     }
 
     private static Stream<LogRecord> readLogRecords(String path) {
@@ -62,41 +84,53 @@ public class NginxLogStatsAnalyzer {
         URI uri = new URI(url);
         return Files.lines(Paths.get(uri))
             .map(line -> {
-                String[] parts = line.split(" ");
-                return new LogRecord(parts[0], parts[1], parts[2], Integer.parseInt(parts[3]), Integer.parseInt(parts[4]), parts[5], parts[6]);
+                String[] parts = line.split("\"");
+                String ipAddress = parts[0].split(" ")[0];
+                String datetime = parts[0].substring(parts[0].indexOf('[') + 1, parts[0].indexOf(']'));
+                String request = parts[1];
+                int status = Integer.parseInt(parts[2].trim().split(" ")[0]);
+                int bytesSent = Integer.parseInt(parts[2].trim().split(" ")[1]);
+                String referer = parts[3].trim();
+                String userAgent = parts[5].trim();
+                return new LogRecord(ipAddress, datetime, request, status, bytesSent, referer, userAgent);
+
             });
     }
 
     private static Stream<LogRecord> readLogRecordsFromFiles(String filePathPattern) throws IOException {
         PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + filePathPattern);
-        Path currentDir = Paths.get(".").toAbsolutePath();
-        System.out.println(currentDir);
+        Path currentDir = Paths.get("").toAbsolutePath();
         return Files.find(currentDir, 1, (path, attributes) -> pathMatcher.matches(path))
             .flatMap(path -> {
-                try (Stream<String> lines = Files.lines(path)) {
-                    return lines.map(line -> {
-                        String[] parts = line.split(" ");
-                        return new LogRecord(parts[0], parts[1], parts[2], Integer.parseInt(parts[3]), Integer.parseInt(parts[4]), parts[5], parts[6]);
+                try {
+                    return Files.lines(path).map(line -> {
+                        String[] parts = line.split("\"");
+                        String ipAddress = parts[0].split(" ")[0];
+                        String datetime = parts[0].substring(parts[0].indexOf('[') + 1, parts[0].indexOf(']'));
+                        String request = parts[1];
+                        int status = Integer.parseInt(parts[2].trim().split(" ")[0]);
+                        int bytesSent = Integer.parseInt(parts[2].trim().split(" ")[1]);
+                        String referer = parts[3].trim();
+                        String userAgent = parts[5].trim();
+                        return new LogRecord(ipAddress, datetime, request, status, bytesSent, referer, userAgent);
+
                     });
                 } catch (IOException e) {
-                    e.printStackTrace();
                     return Stream.empty();
                 }
             });
     }
 
-    private static LogReport generateLogReport(Stream<LogRecord> logRecords, String from, String to) {
+    private static LogReport generateLogReport(Stream<LogRecord> logRecords, String from, String to, String path) {
         ZoneOffset offset = OffsetDateTime.now().getOffset();
-//        OffsetDateTime fromDate = OffsetDateTime.of(from, LocalTime.MIDNIGHT, offset);
-//        OffsetDateTime toDate = OffsetDateTime.of(to, LocalTime.MIDNIGHT, offset);
+        OffsetDateTime fromDate =
+            from != null ? OffsetDateTime.of(LocalDate.parse(from), LocalTime.MIDNIGHT, offset) : null;
+        OffsetDateTime toDate =
+            from != null ? OffsetDateTime.of(LocalDate.parse(to), LocalTime.MIDNIGHT, offset) : null;
 
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
-        OffsetDateTime fromDate = from != null ? OffsetDateTime.parse(from, formatter) : null;
-        OffsetDateTime toDate = to != null ? OffsetDateTime.parse(to, formatter) : null;
-
-        LogReport logReport = new LogReport();
+        LogReport logReport = new LogReport(path, fromDate, toDate);
         logRecords
-            .filter(record -> isWithinRange(record.getDateTime(), fromDate, toDate))
+            .filter(logRecord -> isWithinRange(logRecord.getDateTime(), fromDate, toDate))
             .forEach(logReport::addLogRecord);
 
         return logReport;
