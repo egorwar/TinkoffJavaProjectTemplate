@@ -19,10 +19,10 @@ public final class Main {
     @SuppressWarnings("MagicNumber")
     public static void main(String[] args) {
 
-        int width = 800;
-        int height = 800;
+        int width = 1000;
+        int height = 1000;
         int symmetry = 4;
-        int samples = 10000;
+        int samples = 1000;
         int iterPerSample = 100;
         long seed = System.currentTimeMillis();
         Rect world = new Rect(-1.0, -1.0, 2.0, 2.0);
